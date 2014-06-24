@@ -8,6 +8,8 @@ import com.octo.android.robospice.request.listener.RequestProgressListener;
 import com.octo.android.robospice.request.listener.RequestStatus;
 import com.octo.android.robospice.retry.RetryPolicy;
 
+import org.codehaus.jackson.type.TypeReference;
+
 /**
  * Decorates {@link SpiceRequest} and provides additional information used by
  * RoboSpice. There are very few chances that you should use this class directly, though you can.
@@ -49,8 +51,21 @@ public class CachedSpiceRequest<RESULT> extends SpiceRequest<RESULT> {
     }
 
     @Override
-    public Class<RESULT> getResultType() {
-        return spiceRequest.getResultType();
+    public TypeReference<RESULT> getResultTypeReference() {
+        return spiceRequest.getResultTypeReference();
+    }
+    
+    @Override
+    public Class<RESULT> getResultClass() {
+        return spiceRequest.getResultClass();
+    }
+
+    @Override
+    public Object getResultType() {
+        if (getResultTypeReference() != null) {
+            return getResultTypeReference();
+        }
+        return getResultClass();
     }
 
     @Override
@@ -117,7 +132,7 @@ public class CachedSpiceRequest<RESULT> extends SpiceRequest<RESULT> {
     public SpiceRequest<RESULT> getSpiceRequest() {
         return spiceRequest;
     }
-    
+
     /* package private */@Override
     void setStatus(final RequestStatus status) {
         spiceRequest.setStatus(status);

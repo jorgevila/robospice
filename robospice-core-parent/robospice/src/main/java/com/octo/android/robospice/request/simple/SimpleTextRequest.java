@@ -1,23 +1,24 @@
 package com.octo.android.robospice.request.simple;
 
+import com.octo.android.robospice.request.SpiceRequest;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.CharEncoding;
+import org.codehaus.jackson.type.TypeReference;
+
+import roboguice.util.temp.Ln;
+
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.CharEncoding;
-
-import roboguice.util.temp.Ln;
-
-import com.octo.android.robospice.request.SpiceRequest;
 
 public class SimpleTextRequest extends SpiceRequest<String> {
 
     private final String url;
 
     public SimpleTextRequest(final String url) {
-        super(String.class);
+        super(new TypeReference<String>() { });
         this.url = url;
     }
 

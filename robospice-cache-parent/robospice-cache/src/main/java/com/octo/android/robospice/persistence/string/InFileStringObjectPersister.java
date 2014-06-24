@@ -22,7 +22,7 @@ public class InFileStringObjectPersister extends InFileObjectPersister<String> {
     }
 
     @Override
-    public boolean canHandleClass(Class<?> clazz) {
+    public boolean canHandle(Object clazz) {
         return clazz.equals(String.class);
     }
 

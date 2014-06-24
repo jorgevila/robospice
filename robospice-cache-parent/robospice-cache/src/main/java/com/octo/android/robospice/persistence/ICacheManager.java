@@ -1,11 +1,13 @@
 package com.octo.android.robospice.persistence;
 
-import java.util.Date;
-import java.util.List;
-
 import com.octo.android.robospice.persistence.exception.CacheCreationException;
 import com.octo.android.robospice.persistence.exception.CacheLoadingException;
 import com.octo.android.robospice.persistence.exception.CacheSavingException;
+
+import org.codehaus.jackson.type.TypeReference;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * This interface is mainly used for mocking/testing. Developpers should use
@@ -31,6 +33,7 @@ public interface ICacheManager {
      *         nothing is found in cache.
      */
     <T> List<Object> getAllCacheKeys(Class<T> clazz);
+    <T> List<Object> getAllCacheKeys(TypeReference<T> typeRef);
 
     /**
      * Loads an instance of a class clazz, that is stored in cache under the key
@@ -48,6 +51,7 @@ public interface ICacheManager {
      *         maxTimeInCacheBeforeExpiry, then this method will return null.
      */
     <T> T loadDataFromCache(Class<T> clazz, Object cacheKey, long maxTimeInCacheBeforeExpiry) throws CacheLoadingException, CacheCreationException;
+    <T> T loadDataFromCache(TypeReference<T> typeRef, Object cacheKey, long maxTimeInCacheBeforeExpiry) throws CacheLoadingException, CacheCreationException;
 
     /**
      * Loads all data stored in cache for a given class.
@@ -56,6 +60,7 @@ public interface ICacheManager {
      * @return all data stored in cache for a given class.
      */
     <T> List<T> loadAllDataFromCache(Class<T> clazz) throws CacheLoadingException, CacheCreationException;
+    <T> List<T> loadAllDataFromCache(TypeReference<T> typeRef) throws CacheLoadingException, CacheCreationException;
 
     /**
      * Save an instance of a given class, into the cache identified by cacheKey.
@@ -86,6 +91,7 @@ public interface ICacheManager {
      * @throws CacheCreationException
      */
     boolean isDataInCache(Class<?> clazz, Object cacheKey, long maxTimeInCacheBeforeExpiry) throws CacheCreationException;
+    boolean isDataInCache(TypeReference<?> typeRef, Object cacheKey, long maxTimeInCacheBeforeExpiry) throws CacheCreationException;
 
     /**
      * The date at which given data has been stored last in cache.
@@ -100,6 +106,7 @@ public interface ICacheManager {
      * @throws CacheLoadingException
      */
     Date getDateOfDataInCache(Class<?> clazz, Object cacheKey) throws CacheCreationException, CacheLoadingException;
+    Date getDateOfDataInCache(TypeReference<?> typeRef, Object cacheKey) throws CacheCreationException, CacheLoadingException;
 
     /**
      * Removes a given data in the cache that is an instance of class clazz.
@@ -110,6 +117,7 @@ public interface ICacheManager {
      * @return a boolean indicating whether or not this data could be removed.
      */
     boolean removeDataFromCache(Class<?> clazz, Object cacheKey);
+    boolean removeDataFromCache(TypeReference<?> typeRef, Object cacheKey);
 
     /**
      * Removes all data in the cache that are instances of class clazz.
@@ -117,6 +125,7 @@ public interface ICacheManager {
      *            the class of the data to be removed.
      */
     void removeAllDataFromCache(Class<?> clazz);
+    void removeAllDataFromCache(TypeReference<?> typeRef);
 
     /**
      * Removes all data in the cache.

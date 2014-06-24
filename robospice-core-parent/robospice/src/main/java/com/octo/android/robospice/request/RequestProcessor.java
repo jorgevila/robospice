@@ -15,6 +15,8 @@ import com.octo.android.robospice.request.listener.RequestCancellationListener;
 import com.octo.android.robospice.request.listener.RequestListener;
 import com.octo.android.robospice.request.listener.SpiceServiceListener;
 
+import org.codehaus.jackson.type.TypeReference;
+
 /**
  * Delegate class of the {@link SpiceService}, easier to test than an Android
  * {@link android.app.Service}.
@@ -152,6 +154,14 @@ public class RequestProcessor {
 
     public void removeAllDataFromCache(final Class<?> clazz) {
         cacheManager.removeAllDataFromCache(clazz);
+    }
+    
+    public boolean removeDataFromCache(final TypeReference<?> typeRef, final Object cacheKey) {
+        return cacheManager.removeDataFromCache(typeRef, cacheKey);
+    }
+
+    public void removeAllDataFromCache(final TypeReference<?> typeRef) {
+        cacheManager.removeAllDataFromCache(typeRef);
     }
 
     public void removeAllDataFromCache() {

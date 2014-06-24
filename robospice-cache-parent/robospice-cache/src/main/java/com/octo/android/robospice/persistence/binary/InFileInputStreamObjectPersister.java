@@ -76,9 +76,9 @@ public class InFileInputStreamObjectPersister extends InFileObjectPersister<Inpu
     }
 
     @Override
-    public boolean canHandleClass(Class<?> clazz) {
+    public boolean canHandle(Object clazz) {
         try {
-            clazz.asSubclass(InputStream.class);
+            ((Class<?>) clazz).asSubclass(InputStream.class);
             return true;
         } catch (ClassCastException ex) {
             return false;

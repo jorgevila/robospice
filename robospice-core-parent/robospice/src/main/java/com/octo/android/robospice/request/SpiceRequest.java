@@ -1,8 +1,5 @@
 package com.octo.android.robospice.request;
 
-import java.lang.reflect.Modifier;
-import java.util.concurrent.Future;
-
 import android.content.Context;
 
 import com.octo.android.robospice.request.listener.RequestCancellationListener;
@@ -11,6 +8,11 @@ import com.octo.android.robospice.request.listener.RequestProgressListener;
 import com.octo.android.robospice.request.listener.RequestStatus;
 import com.octo.android.robospice.retry.DefaultRetryPolicy;
 import com.octo.android.robospice.retry.RetryPolicy;
+
+import org.codehaus.jackson.type.TypeReference;
+
+import java.lang.reflect.Modifier;
+import java.util.concurrent.Future;
 
 /**
  * Base class for writing requests in RoboSpice. Simply override
@@ -26,7 +28,8 @@ public abstract class SpiceRequest<RESULT> implements Comparable<SpiceRequest<RE
     public static final int PRIORITY_NORMAL = 50;
     public static final int PRIORITY_LOW = 100;
 
-    private final Class<RESULT> resultType;
+    private final TypeReference<RESULT> resultType;
+    private final Class<RESULT> resultClass;
     private boolean isCanceled = false;
     private Future<?> future;
     private RequestProgressListener requestProgressListener;
@@ -37,9 +40,30 @@ public abstract class SpiceRequest<RESULT> implements Comparable<SpiceRequest<RE
 
     private RetryPolicy retryPolicy = new DefaultRetryPolicy();
 
+    public SpiceRequest(final TypeReference<RESULT> typeRef) {
+        checkInnerClassDeclarationToPreventMemoryLeak();
+        this.resultType = typeRef;
+        this.resultClass = typeRef.getTypeClass();
+    }
+    
     public SpiceRequest(final Class<RESULT> clazz) {
         checkInnerClassDeclarationToPreventMemoryLeak();
-        this.resultType = clazz;
+        this.resultType = new TypeReference<RESULT>() {
+        };
+        this.resultClass = clazz;
+    }
+
+    @SuppressWarnings("unchecked")
+    public SpiceRequest(Object type) {
+        checkInnerClassDeclarationToPreventMemoryLeak();
+        if (type instanceof TypeReference<?>) {
+            this.resultType = (TypeReference<RESULT>) type;
+            this.resultClass = resultType.getTypeClass();
+        } else {
+            this.resultType = new TypeReference<RESULT>() {
+            };
+            this.resultClass = (Class<RESULT>) type;
+        }
     }
 
     public RetryPolicy getRetryPolicy() {
@@ -88,7 +112,18 @@ public abstract class SpiceRequest<RESULT> implements Comparable<SpiceRequest<RE
 
     public abstract RESULT loadDataFromNetwork() throws Exception;
 
-    public Class<RESULT> getResultType() {
+    public Object getResultType() {
+        if (getResultTypeReference() != null) {
+            return resultType;
+        }
+        return resultClass;
+    }
+    
+    public Class<RESULT> getResultClass() {
+        return resultClass;
+    }
+
+    public TypeReference<RESULT> getResultTypeReference() {
         return resultType;
     }
 
@@ -158,5 +193,4 @@ public abstract class SpiceRequest<RESULT> implements Comparable<SpiceRequest<RE
 
         return this.priority - other.priority;
     }
-
 }

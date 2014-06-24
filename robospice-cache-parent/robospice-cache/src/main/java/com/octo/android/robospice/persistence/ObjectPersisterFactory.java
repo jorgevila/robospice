@@ -1,10 +1,12 @@
 package com.octo.android.robospice.persistence;
 
-import java.util.List;
-
 import android.app.Application;
 
 import com.octo.android.robospice.persistence.exception.CacheCreationException;
+
+import org.codehaus.jackson.type.TypeReference;
+
+import java.util.List;
 
 /**
  * Super class of all factories of {@link ObjectPersisterFactory} classes. They
@@ -22,7 +24,7 @@ public abstract class ObjectPersisterFactory implements Persister {
 
     private Application mApplication;
     private boolean isAsyncSaveEnabled;
-    private List<Class<?>> listHandledClasses;
+    private List<?> listHandled;
 
     /**
      * Creates an {@link ObjectPersisterFactory} given an Android application.
@@ -42,16 +44,16 @@ public abstract class ObjectPersisterFactory implements Persister {
      * @param application
      *            the android context needed to access android file system or
      *            databases to store.
-     * @param listHandledClasses
+     * @param listHandled
      *            the list of classes that is handled by the factory. The
      *            factory will try to produce an {@link ObjectPersister} for
      *            each element of the list.
      */
-    public ObjectPersisterFactory(Application application, List<Class<?>> listHandledClasses) {
+    public ObjectPersisterFactory(Application application, List<?> listHandled) {
         this.mApplication = application;
-        this.listHandledClasses = listHandledClasses;
+        this.listHandled = listHandled;
     }
-
+    
     protected final Application getApplication() {
         return mApplication;
     }
@@ -59,17 +61,17 @@ public abstract class ObjectPersisterFactory implements Persister {
     /**
      * Wether or not this bus element can persist/unpersist objects of the given
      * class clazz.
-     * @param clazz
+     * @param obj
      *            the class of objets we are looking forward to persist.
      * @return true if this bus element can persist/unpersist objects of the
      *         given class clazz. False otherwise.
      */
     @Override
-    public boolean canHandleClass(Class<?> clazz) {
-        if (listHandledClasses == null) {
+    public boolean canHandle(Object obj) {
+        if (listHandled == null) {
             return true;
         } else {
-            return listHandledClasses.contains(clazz);
+            return listHandled.contains(obj);
         }
     }
 
@@ -84,8 +86,26 @@ public abstract class ObjectPersisterFactory implements Persister {
      *             if the persist fails to create its cache (it may also create
      *             it later, but it is suggested to fail as fast as possible).
      */
-    public abstract <DATA> ObjectPersister<DATA> createObjectPersister(Class<DATA> clazz) throws CacheCreationException;
+    public <DATA> ObjectPersister<DATA> createObjectPersister(Class<DATA> clazz) throws CacheCreationException {
+        return null;
+    }
 
+    /**
+     * Creates a {@link ObjectPersister} for a given class.
+     * @param typeRef
+     *            the type reference of the items that need to be saved/loaded from
+     *            cache.
+     * @return a {@link ObjectPersister} able to load/save instances of type
+     *         typeRef.
+     * @throws CacheCreationException
+     *             if the persist fails to create its cache (it may also create
+     *             it later, but it is suggested to fail as fast as possible).
+     */
+    public <DATA> ObjectPersister<DATA> createObjectPersister(TypeReference<DATA> typeRef) throws CacheCreationException {
+        return null;
+    }
+
+    
     /**
      * Set whether this {@link ObjectPersisterFactory} will set the
      * {@link ObjectPersister} instances it produces to save data asynchronously
@@ -114,6 +134,6 @@ public abstract class ObjectPersisterFactory implements Persister {
      * @return the list of classes persisted by this factory.
      */
     protected List<Class<?>> getListHandledClasses() {
-        return listHandledClasses;
+        return (List<Class<?>>) listHandled;
     }
 }

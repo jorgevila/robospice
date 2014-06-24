@@ -40,6 +40,8 @@ import com.octo.android.robospice.request.notifier.DefaultRequestListenerNotifie
 import com.octo.android.robospice.request.notifier.RequestListenerNotifier;
 import com.octo.android.robospice.request.notifier.SpiceServiceListenerNotifier;
 
+import org.codehaus.jackson.type.TypeReference;
+
 /**
  * This is an abstract class used to manage the cache and provide web service
  * result to an activity. <br/>
@@ -427,6 +429,34 @@ public abstract class SpiceService extends Service {
 
     public void dontNotifyRequestListenersForRequest(final CachedSpiceRequest<?> request, final Collection<RequestListener<?>> listRequestListener) {
         requestProcessor.dontNotifyRequestListenersForRequest(request, listRequestListener);
+    }
+
+    public boolean removeDataFromCache(final TypeReference<?> typeRef, final Object cacheKey) {
+        return requestProcessor.removeDataFromCache(typeRef, cacheKey);
+    }
+
+    public void removeAllDataFromCache(final TypeReference<?> typeRef) {
+        requestProcessor.removeAllDataFromCache(typeRef);
+    }
+
+    public <T> List<Object> getAllCacheKeys(final TypeReference<T> typeRef) {
+        return cacheManager.getAllCacheKeys(typeRef);
+    }
+
+    public <T> List<T> loadAllDataFromCache(final TypeReference<T> typeRef) throws CacheLoadingException, CacheCreationException {
+        return cacheManager.loadAllDataFromCache(typeRef);
+    }
+
+    public <T> T getDataFromCache(final TypeReference<T> typeRef, final Object cacheKey) throws CacheLoadingException, CacheCreationException {
+        return cacheManager.loadDataFromCache(typeRef, cacheKey, DurationInMillis.ALWAYS_RETURNED);
+    }
+
+    public boolean isDataInCache(final TypeReference<?> typeRef, Object cacheKey, long cacheExpiryDuration) throws CacheCreationException {
+        return cacheManager.isDataInCache(typeRef, cacheKey, cacheExpiryDuration);
+    }
+
+    public Date getDateOfDataInCache(final TypeReference<?> typeRef, Object cacheKey) throws CacheLoadingException, CacheCreationException {
+        return cacheManager.getDateOfDataInCache(typeRef, cacheKey);
     }
 
     // ----------------------------------

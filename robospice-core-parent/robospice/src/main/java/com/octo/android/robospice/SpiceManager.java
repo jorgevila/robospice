@@ -21,6 +21,7 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 import roboguice.util.temp.Ln;
+
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -52,6 +53,8 @@ import com.octo.android.robospice.request.listener.PendingRequestListener;
 import com.octo.android.robospice.request.listener.RequestListener;
 import com.octo.android.robospice.request.listener.SpiceServiceAdapter;
 import com.octo.android.robospice.request.listener.SpiceServiceListener;
+
+import org.codehaus.jackson.type.TypeReference;
 
 /**
  * The instances of this class allow to acces the {@link SpiceService}. <br/>
@@ -880,6 +883,104 @@ public class SpiceManager implements Runnable {
 
     public <T> Future<List<T>> getAllDataFromCache(final Class<T> clazz) throws CacheLoadingException {
         return executeCommand(new GetAllDataFromCacheCommand<T>(this, clazz));
+    }
+
+    /**
+     * Get some data previously saved in cache with key <i>requestCacheKey</i>.
+     * This method doesn't perform any network processing, it just checks if
+     * there are previously saved data. Don't call this method in the main
+     * thread because you could block it. Instead, use the asynchronous version
+     * of this method:
+     * {@link #getFromCache(Class, Object, long, RequestListener)}.
+     * @param typeRef
+     *            the type reference of the result to retrieve from cache.
+     * @param cacheKey
+     *            the key used to store and retrieve the result of the request
+     *            in the cache
+     * @return a future object that will hold data in cache. Calling get on this
+     *         future will block until the data is actually effectively taken
+     *         from cache.
+     * @throws CacheLoadingException
+     *             Exception thrown when a problem occurs while loading data
+     *             from cache.
+     */
+    public <T> Future<T> getDataFromCache(final TypeReference<T> typeRef, final Object cacheKey) throws CacheLoadingException {
+        return executeCommand(new GetDataFromCacheCommand<T>(this, typeRef, cacheKey));
+    }
+
+    /**
+     * Tests whether some data is present in cache or not.
+     * @param typeRef
+     *            the type reference of the result to retrieve from cache.
+     * @param cacheKey
+     *            the key used to store and retrieve the result of the request
+     *            in the cache
+     * @param cacheExpiryDuration
+     *            duration in milliseconds after which the content of the cache
+     *            will be considered to be expired.
+     *            {@link DurationInMillis#ALWAYS_RETURNED} means data in cache
+     *            is always returned if it exists.
+     *            {@link DurationInMillis#ALWAYS_EXPIRED} means data in cache is
+     *            never returned.(see {@link DurationInMillis})
+     * @return the data has it has been saved by an ObjectPersister in cache.
+     * @throws CacheCreationException
+     *             Exception thrown when a problem occurs while looking for data
+     *             in cache.
+     */
+    public Future<Boolean> isDataInCache(final TypeReference<?> typeRef, final Object cacheKey, long cacheExpiryDuration) throws CacheCreationException {
+        return executeCommand(new IsDataInCacheCommand(this, typeRef, cacheKey, cacheExpiryDuration));
+    }
+
+    /**
+     * Returns the last date of storage of a given data into the cache.
+     * @param clazz
+     *            the class of the result to retrieve from cache.
+     * @param cacheKey
+     *            the key used to store and retrieve the result of the request
+     *            in the cache
+     * @return the date at which data has been stored in cache. Null if no such
+     *         data is in Cache.
+     * @throws CacheLoadingException
+     *             Exception thrown when a problem occurs while loading data
+     *             from cache.
+     */
+    public Future<Date> getDateOfDataInCache(final TypeReference<?> typeRef, final Object cacheKey) throws CacheCreationException {
+        return executeCommand(new GetDateOfDataInCacheCommand(this, typeRef, cacheKey));
+    }
+
+    /**
+     * Remove some specific content from cache
+     * @param typeRef
+     *            the type reference of the result to retrieve from cache.
+     * @param cacheKey
+     *            the key of the object in cache
+     */
+    public <T> Future<?> removeDataFromCache(final TypeReference<?> typeRef, final Object cacheKey) {
+        if (typeRef == null || cacheKey == null) {
+            throw new IllegalArgumentException("Both parameters must be non null.");
+        }
+
+        return executeCommand(new RemoveDataFromCacheCommand(this, typeRef, cacheKey));
+    }
+
+    /**
+     * Remove some specific content from cache
+     * @param typeRef
+     *            the type reference of the result to retrieve from cache.
+     */
+    public <T> Future<?> removeDataFromCache(final TypeReference<?> typeRef) {
+        if (typeRef == null) {
+            throw new IllegalArgumentException("Clazz must be non null.");
+        }
+        return executeCommand(new RemoveDataClassFromCacheCommand(this, typeRef));
+    }
+
+    public Future<List<Object>> getAllCacheKeys(final TypeReference<?> typeRef) {
+        return executeCommand(new GetAllCacheKeysCommand(this, typeRef));
+    }
+
+    public <T> Future<List<T>> getAllDataFromCache(final TypeReference<T> typeRef) throws CacheLoadingException {
+        return executeCommand(new GetAllDataFromCacheCommand<T>(this, typeRef));
     }
 
     /**

@@ -35,7 +35,7 @@ public abstract class ObjectPersister<T> implements Persister, CacheCleaner {
     }
 
     @Override
-    public boolean canHandleClass(Class<?> clazz) {
+    public boolean canHandle(Object clazz) {
         return clazz.equals(this.clazz);
     }
 

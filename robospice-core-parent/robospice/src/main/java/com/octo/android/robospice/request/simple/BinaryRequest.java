@@ -7,6 +7,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.apache.commons.io.IOUtils;
+import org.codehaus.jackson.type.TypeReference;
 
 import roboguice.util.temp.Ln;
 
@@ -24,7 +25,7 @@ public abstract class BinaryRequest extends SpiceRequest<InputStream> {
     protected String url;
 
     public BinaryRequest(final String url) {
-        super(InputStream.class);
+        super(new TypeReference<InputStream>() { });
         this.url = url;
     }
 

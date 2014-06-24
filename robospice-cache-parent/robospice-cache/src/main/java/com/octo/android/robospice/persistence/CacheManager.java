@@ -1,5 +1,13 @@
 package com.octo.android.robospice.persistence;
 
+import com.octo.android.robospice.persistence.exception.CacheCreationException;
+import com.octo.android.robospice.persistence.exception.CacheLoadingException;
+import com.octo.android.robospice.persistence.exception.CacheSavingException;
+
+import org.codehaus.jackson.type.TypeReference;
+
+import roboguice.util.temp.Ln;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -8,12 +16,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
-
-import roboguice.util.temp.Ln;
-
-import com.octo.android.robospice.persistence.exception.CacheCreationException;
-import com.octo.android.robospice.persistence.exception.CacheLoadingException;
-import com.octo.android.robospice.persistence.exception.CacheSavingException;
 
 /**
  * An entity responsible for loading/saving data from/to cache. It implements a
@@ -165,7 +167,7 @@ public class CacheManager implements ICacheManager {
     @SuppressWarnings("unchecked")
     protected <T> ObjectPersister<T> getObjectPersister(Class<T> clazz) throws CacheCreationException {
         for (Persister persister : this.listPersister) {
-            if (persister.canHandleClass(clazz)) {
+            if (persister.canHandle(clazz)) {
                 if (persister instanceof ObjectPersister) {
                     return (ObjectPersister<T>) persister;
                 }
@@ -173,10 +175,10 @@ public class CacheManager implements ICacheManager {
                 if (persister instanceof ObjectPersisterFactory) {
                     ObjectPersisterFactory factory = (ObjectPersisterFactory) persister;
 
-                    if (factory.canHandleClass(clazz)) {
+                    if (factory.canHandle(clazz)) {
                         List<ObjectPersister<?>> listPersisterForFactory = mapFactoryToPersister.get(factory);
                         for (ObjectPersister<?> objectPersister : listPersisterForFactory) {
-                            if (objectPersister.canHandleClass(clazz)) {
+                            if (objectPersister.canHandle(clazz)) {
                                 return (ObjectPersister<T>) objectPersister;
                             }
                         }
@@ -191,4 +193,107 @@ public class CacheManager implements ICacheManager {
         throw new RuntimeException("Class " + clazz.getName() + " is not handled by any registered ObjectPersister. Please add a Persister for this class inside the CacheManager of your SpiceService.");
     }
 
+    /**
+     * {@inheritDoc}
+     * @throws CacheCreationException
+     */
+    @Override
+    public <T> T loadDataFromCache(TypeReference<T> typeRef, Object cacheKey, long maxTimeInCacheBeforeExpiry) throws CacheLoadingException, CacheCreationException {
+        return getObjectPersister(typeRef).loadDataFromCache(cacheKey, maxTimeInCacheBeforeExpiry);
+    }
+
+    /**
+     * {@inheritDoc}
+     * @throws CacheCreationException
+     */
+    @Override
+    public boolean isDataInCache(TypeReference<?> typeRef, Object cacheKey, long maxTimeInCacheBeforeExpiry) throws CacheCreationException {
+        return getObjectPersister(typeRef).isDataInCache(cacheKey, maxTimeInCacheBeforeExpiry);
+    }
+
+    /**
+     * {@inheritDoc}
+     * @throws CacheLoadingException
+     * @throws CacheCreationException
+     */
+    @Override
+    public Date getDateOfDataInCache(TypeReference<?> typeRef, Object cacheKey) throws CacheLoadingException, CacheCreationException {
+        return new Date(getObjectPersister(typeRef).getCreationDateInCache(cacheKey));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean removeDataFromCache(TypeReference<?> typeRef, Object cacheKey) {
+        try {
+            return getObjectPersister(typeRef).removeDataFromCache(cacheKey);
+        } catch (CacheCreationException e) {
+            Ln.e(e);
+            return false;
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void removeAllDataFromCache(TypeReference<?> typeRef) {
+        try {
+            getObjectPersister(typeRef).removeAllDataFromCache();
+        } catch (CacheCreationException e) {
+            Ln.e(e);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <T> List<Object> getAllCacheKeys(final TypeReference<T> typeRef) {
+        try {
+            return getObjectPersister(typeRef).getAllCacheKeys();
+        } catch (CacheCreationException e) {
+            Ln.e(e);
+            return Collections.emptyList();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     * @throws CacheCreationException
+     */
+    @Override
+    public <T> List<T> loadAllDataFromCache(final TypeReference<T> typeRef) throws CacheLoadingException, CacheCreationException {
+        return getObjectPersister(typeRef).loadAllDataFromCache();
+    }
+    
+    @SuppressWarnings("unchecked")
+    protected <T> ObjectPersister<T> getObjectPersister(TypeReference<T> typeRef) throws CacheCreationException {
+        for (Persister persister : this.listPersister) {
+            if (persister.canHandle(typeRef)) {
+                if (persister instanceof ObjectPersister) {
+                    return (ObjectPersister<T>) persister;
+                }
+
+                if (persister instanceof ObjectPersisterFactory) {
+                    ObjectPersisterFactory factory = (ObjectPersisterFactory) persister;
+
+                    if (factory.canHandle(typeRef)) {
+                        List<ObjectPersister<?>> listPersisterForFactory = mapFactoryToPersister.get(factory);
+                        for (ObjectPersister<?> objectPersister : listPersisterForFactory) {
+                            if (objectPersister.canHandle(typeRef)) {
+                                return (ObjectPersister<T>) objectPersister;
+                            }
+                        }
+                        ObjectPersister<T> newPersister = factory.createObjectPersister(typeRef);
+                        newPersister.setAsyncSaveEnabled(factory.isAsyncSaveEnabled());
+                        listPersisterForFactory.add(newPersister);
+                        return newPersister;
+                    }
+                }
+            }
+        }
+        throw new RuntimeException("Class " + typeRef.getType() + " is not handled by any registered ObjectPersister. Please add a Persister for this class inside the CacheManager of your SpiceService.");
+    }
 }

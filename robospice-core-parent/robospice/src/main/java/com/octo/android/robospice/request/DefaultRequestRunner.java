@@ -1,10 +1,5 @@
 package com.octo.android.robospice.request;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-import java.util.concurrent.locks.ReentrantLock;
-
-import roboguice.util.temp.Ln;
 import android.content.Context;
 
 import com.octo.android.robospice.exception.NetworkException;
@@ -19,6 +14,14 @@ import com.octo.android.robospice.persistence.exception.SpiceException;
 import com.octo.android.robospice.priority.PriorityRunnable;
 import com.octo.android.robospice.request.listener.RequestProgressListener;
 import com.octo.android.robospice.request.listener.RequestStatus;
+
+import org.codehaus.jackson.type.TypeReference;
+
+import roboguice.util.temp.Ln;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Default implementation of {@link RequestRunner }. Processes requests. This class is massively multi-threaded and offers good
@@ -120,7 +123,7 @@ public class DefaultRequestRunner implements RequestRunner {
                     printRequestProcessingDuration(startTime, request);
                     return;
                 }
-                cacheManager.removeDataFromCache(request.getResultType(), request.getRequestCacheKey());
+                removeDataFromCache(request.getResultType(), request.getRequestCacheKey());
                 Ln.d(e, "Cache file deleted.");
             }
         }
@@ -196,7 +199,7 @@ public class DefaultRequestRunner implements RequestRunner {
                     // network
                     requestProgressManager.notifyListenersOfRequestSuccess(request, result);
                 }
-                cacheManager.removeDataFromCache(request.getResultType(), request.getRequestCacheKey());
+                removeDataFromCache(request.getResultType(), request.getRequestCacheKey());
                 Ln.d(e, "Cache file deleted.");
             }
         } else {
@@ -257,9 +260,36 @@ public class DefaultRequestRunner implements RequestRunner {
     // ============================================================================================
     // PRIVATE
     // ============================================================================================
-
+    @SuppressWarnings("unchecked")
+    private <T> T loadDataFromCache(final Object type, final Object cacheKey, final long maxTimeInCacheBeforeExpiry) throws CacheLoadingException, CacheCreationException {
+        if (type instanceof TypeReference) {
+            return loadDataFromCache((TypeReference<T>) type, cacheKey, maxTimeInCacheBeforeExpiry);
+        }
+        return loadDataFromCache((Class<T>) type, cacheKey, maxTimeInCacheBeforeExpiry);
+    }
+    
     private <T> T loadDataFromCache(final Class<T> clazz, final Object cacheKey, final long maxTimeInCacheBeforeExpiry) throws CacheLoadingException, CacheCreationException {
         return cacheManager.loadDataFromCache(clazz, cacheKey, maxTimeInCacheBeforeExpiry);
+    }
+
+    private <T> T loadDataFromCache(final TypeReference<T> typeRef, final Object cacheKey, final long maxTimeInCacheBeforeExpiry) throws CacheLoadingException, CacheCreationException {
+        return cacheManager.loadDataFromCache(typeRef, cacheKey, maxTimeInCacheBeforeExpiry);
+    }
+
+    @SuppressWarnings("unchecked")
+    private boolean removeDataFromCache(final Object type, final Object cacheKey) {
+        if (type instanceof TypeReference) {
+            return removeDataFromCache((TypeReference<?>) type, cacheKey);
+        }
+        return removeDataFromCache((Class<?>) type, cacheKey);
+    }
+
+    private boolean removeDataFromCache(final Class<?> clazz, final Object cacheKey) {
+        return cacheManager.removeDataFromCache(clazz, cacheKey);
+    }
+
+    private boolean removeDataFromCache(final TypeReference<?> typeRef, final Object cacheKey) {
+        return cacheManager.removeDataFromCache(typeRef, cacheKey);
     }
 
     private <T> T saveDataToCacheAndReturnData(final T data, final Object cacheKey) throws CacheSavingException, CacheCreationException {

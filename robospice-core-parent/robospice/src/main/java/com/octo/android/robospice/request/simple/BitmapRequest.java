@@ -10,8 +10,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.apache.commons.io.IOUtils;
+import org.codehaus.jackson.type.TypeReference;
 
 import roboguice.util.temp.Ln;
+
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
@@ -55,7 +57,7 @@ public class BitmapRequest extends SpiceRequest<Bitmap> implements IBitmapReques
      *            a file used to store data during download.
      */
     public BitmapRequest(String url, BitmapFactory.Options options, File cacheFile) {
-        super(Bitmap.class);
+        super(new TypeReference<Bitmap>() { });
         this.url = url;
         this.options = options;
         this.cacheFile = cacheFile;
@@ -73,7 +75,7 @@ public class BitmapRequest extends SpiceRequest<Bitmap> implements IBitmapReques
      *            a file used to store data during download.
      */
     public BitmapRequest(String url, int width, int height, File cacheFile) {
-        super(Bitmap.class);
+        super(new TypeReference<Bitmap>() { });
         this.url = url;
         this.width = width;
         this.height = height;
