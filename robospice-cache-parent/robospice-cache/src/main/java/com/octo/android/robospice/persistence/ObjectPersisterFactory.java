@@ -67,6 +67,19 @@ public abstract class ObjectPersisterFactory implements Persister {
      *         given class clazz. False otherwise.
      */
     @Override
+    public boolean canHandleClass(Class<?> clazz) {
+        return canHandle((Object) clazz);
+    }
+    
+    /**
+     * Wether or not this bus element can persist/unpersist objects of the given
+     * class clazz.
+     * @param obj
+     *            the class of objets we are looking forward to persist.
+     * @return true if this bus element can persist/unpersist objects of the
+     *         given class clazz. False otherwise.
+     */
+    @Override
     public boolean canHandle(Object obj) {
         if (listHandled == null) {
             return true;
@@ -105,7 +118,6 @@ public abstract class ObjectPersisterFactory implements Persister {
         return null;
     }
 
-    
     /**
      * Set whether this {@link ObjectPersisterFactory} will set the
      * {@link ObjectPersister} instances it produces to save data asynchronously
@@ -133,6 +145,7 @@ public abstract class ObjectPersisterFactory implements Persister {
      * Return the list of classes persisted by this factory.
      * @return the list of classes persisted by this factory.
      */
+    @SuppressWarnings("unchecked")
     protected List<Class<?>> getListHandledClasses() {
         return (List<Class<?>>) listHandled;
     }

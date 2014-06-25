@@ -1,6 +1,5 @@
 package com.octo.android.robospice.persistence;
 
-import org.codehaus.jackson.type.TypeReference;
 
 /**
  * This interface defines the common behavior of all elements inside the
@@ -9,6 +8,16 @@ import org.codehaus.jackson.type.TypeReference;
  */
 public interface Persister {
 
+    /**
+     * Whether or not this bus element can persist/unpersist objects of the
+     * given type.
+     * @param obj
+     *            the type reference of objects we are looking forward to persist.
+     * @return true if this bus element can persist/unpersist objects of the
+     *         given type. False otherwise.
+     */
+    boolean canHandleClass(Class<?> clazz);
+    
     /**
      * Whether or not this bus element can persist/unpersist objects of the
      * given type.

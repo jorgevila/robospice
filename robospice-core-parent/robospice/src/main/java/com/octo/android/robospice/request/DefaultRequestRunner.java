@@ -276,7 +276,6 @@ public class DefaultRequestRunner implements RequestRunner {
         return cacheManager.loadDataFromCache(typeRef, cacheKey, maxTimeInCacheBeforeExpiry);
     }
 
-    @SuppressWarnings("unchecked")
     private boolean removeDataFromCache(final Object type, final Object cacheKey) {
         if (type instanceof TypeReference) {
             return removeDataFromCache((TypeReference<?>) type, cacheKey);

@@ -10,6 +10,10 @@ public abstract class GoogleHttpClientSpiceRequest<RESULT> extends SpiceRequest<
 
     private HttpRequestFactory httpRequestFactory;
 
+    public GoogleHttpClientSpiceRequest(Class<RESULT> clazz) {
+        super(clazz);
+    }
+
     public GoogleHttpClientSpiceRequest(TypeReference<RESULT> typeRef) {
         super(typeRef);
     }
