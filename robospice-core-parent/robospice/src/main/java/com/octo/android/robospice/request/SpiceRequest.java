@@ -2,14 +2,13 @@ package com.octo.android.robospice.request;
 
 import android.content.Context;
 
+import com.octo.android.robospice.persistence.type.TypeReference;
 import com.octo.android.robospice.request.listener.RequestCancellationListener;
 import com.octo.android.robospice.request.listener.RequestProgress;
 import com.octo.android.robospice.request.listener.RequestProgressListener;
 import com.octo.android.robospice.request.listener.RequestStatus;
 import com.octo.android.robospice.retry.DefaultRetryPolicy;
 import com.octo.android.robospice.retry.RetryPolicy;
-
-import org.codehaus.jackson.type.TypeReference;
 
 import java.lang.reflect.Modifier;
 import java.util.concurrent.Future;

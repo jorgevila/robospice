@@ -2,8 +2,7 @@ package com.octo.android.robospice.command;
 
 import com.octo.android.robospice.SpiceManager;
 import com.octo.android.robospice.SpiceService;
-
-import org.codehaus.jackson.type.TypeReference;
+import com.octo.android.robospice.persistence.type.TypeReference;
 
 public class RemoveDataClassFromCacheCommand extends SpiceManager.SpiceManagerCommand<Void> {
     private Class<?> clazz;

@@ -11,11 +11,10 @@ import com.octo.android.robospice.persistence.exception.CacheCreationException;
 import com.octo.android.robospice.persistence.exception.CacheLoadingException;
 import com.octo.android.robospice.persistence.exception.CacheSavingException;
 import com.octo.android.robospice.persistence.exception.SpiceException;
+import com.octo.android.robospice.persistence.type.TypeReference;
 import com.octo.android.robospice.priority.PriorityRunnable;
 import com.octo.android.robospice.request.listener.RequestProgressListener;
 import com.octo.android.robospice.request.listener.RequestStatus;
-
-import org.codehaus.jackson.type.TypeReference;
 
 import roboguice.util.temp.Ln;
 

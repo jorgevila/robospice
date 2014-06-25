@@ -1,13 +1,15 @@
 package com.octo.android.robospice.request;
 
+import android.test.AndroidTestCase;
+
+import com.octo.android.robospice.persistence.type.TypeReference;
+import com.octo.android.robospice.stub.SpiceRequestStub;
+import com.octo.android.robospice.stub.SpiceRequestSucceedingStub;
+import com.octo.android.robospice.stub.SpiceRequestTypeReferenceStub;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import android.test.AndroidTestCase;
-
-import com.octo.android.robospice.stub.SpiceRequestStub;
-import com.octo.android.robospice.stub.SpiceRequestSucceedingStub;
 
 public class SpiceRequestTest extends AndroidTestCase {
 
@@ -33,5 +35,11 @@ public class SpiceRequestTest extends AndroidTestCase {
         assertEquals(stubRequestHighPriority, spiceRequestList.get(0));
         assertEquals(stubRequestNormalPriority, spiceRequestList.get(1));
         assertEquals(stubRequestLowPriority, spiceRequestList.get(2));
+    }
+    
+    public void testSpiceRequestTypeRef() {
+        
+        // given
+        SpiceRequestTypeReferenceStub<List<String>> req = new SpiceRequestTypeReferenceStub<List<String>>(new TypeReference<List<String>>() { });
     }
 }

@@ -1,16 +1,5 @@
 package com.octo.android.robospice;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.TimeUnit;
-
-import roboguice.util.temp.Ln;
-
 import android.app.Application;
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -27,6 +16,7 @@ import com.octo.android.robospice.persistence.DurationInMillis;
 import com.octo.android.robospice.persistence.exception.CacheCreationException;
 import com.octo.android.robospice.persistence.exception.CacheLoadingException;
 import com.octo.android.robospice.persistence.exception.CacheSavingException;
+import com.octo.android.robospice.persistence.type.TypeReference;
 import com.octo.android.robospice.priority.PriorityThreadPoolExecutor;
 import com.octo.android.robospice.request.CachedSpiceRequest;
 import com.octo.android.robospice.request.DefaultRequestRunner;
@@ -40,7 +30,16 @@ import com.octo.android.robospice.request.notifier.DefaultRequestListenerNotifie
 import com.octo.android.robospice.request.notifier.RequestListenerNotifier;
 import com.octo.android.robospice.request.notifier.SpiceServiceListenerNotifier;
 
-import org.codehaus.jackson.type.TypeReference;
+import roboguice.util.temp.Ln;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This is an abstract class used to manage the cache and provide web service

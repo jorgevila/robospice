@@ -1,10 +1,10 @@
 package com.octo.android.robospice.request.simple;
 
+import com.octo.android.robospice.persistence.type.TypeReference;
 import com.octo.android.robospice.request.SpiceRequest;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.CharEncoding;
-import org.codehaus.jackson.type.TypeReference;
 
 import roboguice.util.temp.Ln;
 

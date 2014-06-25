@@ -1,27 +1,5 @@
 package com.octo.android.robospice;
 
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.IdentityHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.PriorityBlockingQueue;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.ReentrantLock;
-
-import roboguice.util.temp.Ln;
-
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -47,6 +25,7 @@ import com.octo.android.robospice.persistence.DurationInMillis;
 import com.octo.android.robospice.persistence.exception.CacheCreationException;
 import com.octo.android.robospice.persistence.exception.CacheLoadingException;
 import com.octo.android.robospice.persistence.exception.CacheSavingException;
+import com.octo.android.robospice.persistence.type.TypeReference;
 import com.octo.android.robospice.request.CachedSpiceRequest;
 import com.octo.android.robospice.request.SpiceRequest;
 import com.octo.android.robospice.request.listener.PendingRequestListener;
@@ -54,7 +33,27 @@ import com.octo.android.robospice.request.listener.RequestListener;
 import com.octo.android.robospice.request.listener.SpiceServiceAdapter;
 import com.octo.android.robospice.request.listener.SpiceServiceListener;
 
-import org.codehaus.jackson.type.TypeReference;
+import roboguice.util.temp.Ln;
+
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.IdentityHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.PriorityBlockingQueue;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * The instances of this class allow to acces the {@link SpiceService}. <br/>

@@ -3,8 +3,7 @@ package com.octo.android.robospice.persistence;
 import android.app.Application;
 
 import com.octo.android.robospice.persistence.exception.CacheCreationException;
-
-import org.codehaus.jackson.type.TypeReference;
+import com.octo.android.robospice.persistence.type.TypeReference;
 
 import java.util.List;
 

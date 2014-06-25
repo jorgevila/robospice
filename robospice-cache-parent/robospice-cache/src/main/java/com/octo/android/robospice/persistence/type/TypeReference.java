@@ -1,4 +1,4 @@
-package org.codehaus.jackson.type;
+package com.octo.android.robospice.persistence.type;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.GenericArrayType;

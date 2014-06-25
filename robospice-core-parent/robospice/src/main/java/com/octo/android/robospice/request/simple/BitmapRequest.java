@@ -1,5 +1,16 @@
 package com.octo.android.robospice.request.simple;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+
+import com.octo.android.robospice.persistence.type.TypeReference;
+import com.octo.android.robospice.request.ProgressByteProcessor;
+import com.octo.android.robospice.request.SpiceRequest;
+
+import org.apache.commons.io.IOUtils;
+
+import roboguice.util.temp.Ln;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -8,17 +19,6 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-
-import org.apache.commons.io.IOUtils;
-import org.codehaus.jackson.type.TypeReference;
-
-import roboguice.util.temp.Ln;
-
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-
-import com.octo.android.robospice.request.ProgressByteProcessor;
-import com.octo.android.robospice.request.SpiceRequest;
 
 /**
  * Downloads big images in size as bitmaps. All data is passed to the listener

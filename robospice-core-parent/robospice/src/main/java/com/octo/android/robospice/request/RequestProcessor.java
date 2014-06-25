@@ -1,21 +1,20 @@
 package com.octo.android.robospice.request;
 
+import com.octo.android.robospice.SpiceService;
+import com.octo.android.robospice.persistence.CacheManager;
+import com.octo.android.robospice.persistence.type.TypeReference;
+import com.octo.android.robospice.request.listener.RequestCancellationListener;
+import com.octo.android.robospice.request.listener.RequestListener;
+import com.octo.android.robospice.request.listener.SpiceServiceListener;
+
+import roboguice.util.temp.Ln;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
-
-import roboguice.util.temp.Ln;
-
-import com.octo.android.robospice.SpiceService;
-import com.octo.android.robospice.persistence.CacheManager;
-import com.octo.android.robospice.request.listener.RequestCancellationListener;
-import com.octo.android.robospice.request.listener.RequestListener;
-import com.octo.android.robospice.request.listener.SpiceServiceListener;
-
-import org.codehaus.jackson.type.TypeReference;
 
 /**
  * Delegate class of the {@link SpiceService}, easier to test than an Android

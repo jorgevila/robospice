@@ -4,8 +4,7 @@ import com.octo.android.robospice.SpiceManager;
 import com.octo.android.robospice.SpiceService;
 import com.octo.android.robospice.persistence.exception.CacheCreationException;
 import com.octo.android.robospice.persistence.exception.CacheSavingException;
-
-import org.codehaus.jackson.type.TypeReference;
+import com.octo.android.robospice.persistence.type.TypeReference;
 
 public class IsDataInCacheCommand extends SpiceManager.SpiceManagerCommand<Boolean> {
     private Class<?> clazz;

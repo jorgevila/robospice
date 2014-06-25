@@ -3,8 +3,7 @@ package com.octo.android.robospice.persistence;
 import com.octo.android.robospice.persistence.exception.CacheCreationException;
 import com.octo.android.robospice.persistence.exception.CacheLoadingException;
 import com.octo.android.robospice.persistence.exception.CacheSavingException;
-
-import org.codehaus.jackson.type.TypeReference;
+import com.octo.android.robospice.persistence.type.TypeReference;
 
 import roboguice.util.temp.Ln;
 

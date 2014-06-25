@@ -1,18 +1,18 @@
 package com.octo.android.robospice.request.simple;
 
+import com.octo.android.robospice.persistence.type.TypeReference;
+import com.octo.android.robospice.request.ProgressByteProcessor;
+import com.octo.android.robospice.request.SpiceRequest;
+
+import org.apache.commons.io.IOUtils;
+
+import roboguice.util.temp.Ln;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-
-import org.apache.commons.io.IOUtils;
-import org.codehaus.jackson.type.TypeReference;
-
-import roboguice.util.temp.Ln;
-
-import com.octo.android.robospice.request.ProgressByteProcessor;
-import com.octo.android.robospice.request.SpiceRequest;
 
 /**
  * Abstract class used to download binaries. See {@link SmallBinaryRequest} and
