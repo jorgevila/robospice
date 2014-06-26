@@ -96,7 +96,7 @@ public class DefaultRequestRunner implements RequestRunner {
             try {
                 Ln.d("Loading request from cache : " + request);
                 request.setStatus(RequestStatus.READING_FROM_CACHE);
-                result = loadDataFromCache(request.getResultType(), request.getRequestCacheKey(), request.getCacheDuration());
+                result = loadDataFromCache(request.getResultType(), request.getRequestCacheKey(), request.getCacheDuration(), request);
                 // if something is found in cache, fire result and finish
                 // request
                 if (result != null) {
@@ -108,7 +108,7 @@ public class DefaultRequestRunner implements RequestRunner {
                     // as a fallback, some request may accept whatever is in the
                     // cache but still
                     // want an update from network.
-                    result = loadDataFromCache(request.getResultType(), request.getRequestCacheKey(), DurationInMillis.ALWAYS_RETURNED);
+                    result = loadDataFromCache(request.getResultType(), request.getRequestCacheKey(), DurationInMillis.ALWAYS_RETURNED, request);
                     if (result != null) {
                         requestProgressManager.notifyListenersOfRequestSuccessButDontCompleteRequest(request, result);
                     }
@@ -257,8 +257,8 @@ public class DefaultRequestRunner implements RequestRunner {
     // PRIVATE
     // ============================================================================================
 
-    private <T> T loadDataFromCache(final Class<T> clazz, final Object cacheKey, final long maxTimeInCacheBeforeExpiry) throws CacheLoadingException, CacheCreationException {
-        return cacheManager.loadDataFromCache(clazz, cacheKey, maxTimeInCacheBeforeExpiry);
+    private <T> T loadDataFromCache(final Class<T> clazz, final Object cacheKey, final long maxTimeInCacheBeforeExpiry, CachedSpiceRequest<T> request) throws CacheLoadingException, CacheCreationException {
+        return cacheManager.loadDataFromCache(clazz, cacheKey, maxTimeInCacheBeforeExpiry, request.getPersister());
     }
 
     private <T> T saveDataToCacheAndReturnData(final T data, final Object cacheKey) throws CacheSavingException, CacheCreationException {

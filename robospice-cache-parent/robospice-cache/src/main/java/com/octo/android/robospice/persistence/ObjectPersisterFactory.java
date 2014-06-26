@@ -1,10 +1,10 @@
 package com.octo.android.robospice.persistence;
 
-import java.util.List;
-
 import android.app.Application;
 
 import com.octo.android.robospice.persistence.exception.CacheCreationException;
+
+import java.util.List;
 
 /**
  * Super class of all factories of {@link ObjectPersisterFactory} classes. They

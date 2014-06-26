@@ -1,16 +1,17 @@
 package com.octo.android.robospice.request;
 
-import java.lang.reflect.Modifier;
-import java.util.concurrent.Future;
-
 import android.content.Context;
 
+import com.octo.android.robospice.persistence.ObjectPersister;
 import com.octo.android.robospice.request.listener.RequestCancellationListener;
 import com.octo.android.robospice.request.listener.RequestProgress;
 import com.octo.android.robospice.request.listener.RequestProgressListener;
 import com.octo.android.robospice.request.listener.RequestStatus;
 import com.octo.android.robospice.retry.DefaultRetryPolicy;
 import com.octo.android.robospice.retry.RetryPolicy;
+
+import java.lang.reflect.Modifier;
+import java.util.concurrent.Future;
 
 /**
  * Base class for writing requests in RoboSpice. Simply override
@@ -155,6 +156,14 @@ public abstract class SpiceRequest<RESULT> implements Comparable<SpiceRequest<RE
         }
 
         return this.priority - other.priority;
+    }
+    
+    /**
+     * Returns the persister for this spice request type.
+     * @return Persister object
+     */
+    public ObjectPersister<RESULT> getPersister() {
+        return null;
     }
 
 }

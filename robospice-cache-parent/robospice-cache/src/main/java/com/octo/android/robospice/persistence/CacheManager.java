@@ -68,6 +68,18 @@ public class CacheManager implements ICacheManager {
         return getObjectPersister(clazz).loadDataFromCache(cacheKey, maxTimeInCacheBeforeExpiry);
     }
 
+    /**
+     * {@inheritDoc}
+     * @throws CacheCreationException
+     */
+    public <T> T loadDataFromCache(Class<T> clazz, Object cacheKey, long maxTimeInCacheBeforeExpiry, ObjectPersister<T> persister) throws CacheLoadingException, CacheCreationException {
+        if (persister != null)
+        {
+            return persister.loadDataFromCache(cacheKey, maxTimeInCacheBeforeExpiry);
+        }
+        return loadDataFromCache(clazz, cacheKey, maxTimeInCacheBeforeExpiry);
+    }
+    
     @Override
     @SuppressWarnings("unchecked")
     /** {@inheritDoc}*/
@@ -82,8 +94,11 @@ public class CacheManager implements ICacheManager {
      * @throws CacheCreationException
      */
     @Override
-    public boolean isDataInCache(Class<?> clazz, Object cacheKey, long maxTimeInCacheBeforeExpiry) throws CacheCreationException {
-        return getObjectPersister(clazz).isDataInCache(cacheKey, maxTimeInCacheBeforeExpiry);
+    public  boolean isDataInCache(Class<?> clazz, Object cacheKey, long maxTimeInCacheBeforeExpiry) throws CacheCreationException {
+        return isDataInCache(clazz, cacheKey, maxTimeInCacheBeforeExpiry, null);
+    }
+    public <T> boolean isDataInCache(Class<T> clazz, Object cacheKey, long maxTimeInCacheBeforeExpiry, ObjectPersister<T> persister) throws CacheCreationException {
+        return getObjectPersister(clazz, persister).isDataInCache(cacheKey, maxTimeInCacheBeforeExpiry);
     }
 
     /**
@@ -93,7 +108,10 @@ public class CacheManager implements ICacheManager {
      */
     @Override
     public Date getDateOfDataInCache(Class<?> clazz, Object cacheKey) throws CacheLoadingException, CacheCreationException {
-        return new Date(getObjectPersister(clazz).getCreationDateInCache(cacheKey));
+        return getDateOfDataInCache(clazz, cacheKey, null);
+    }
+    public <T> Date getDateOfDataInCache(Class<T> clazz, Object cacheKey, ObjectPersister<T> persister) throws CacheLoadingException, CacheCreationException {
+        return new Date(getObjectPersister(clazz, persister).getCreationDateInCache(cacheKey));
     }
 
     /**
@@ -101,8 +119,11 @@ public class CacheManager implements ICacheManager {
      */
     @Override
     public boolean removeDataFromCache(Class<?> clazz, Object cacheKey) {
+        return removeDataFromCache(clazz, cacheKey, null);
+    }
+    public <T> boolean removeDataFromCache(Class<T> clazz, Object cacheKey, ObjectPersister<T> persister) {
         try {
-            return getObjectPersister(clazz).removeDataFromCache(cacheKey);
+            return getObjectPersister(clazz, persister).removeDataFromCache(cacheKey);
         } catch (CacheCreationException e) {
             Ln.e(e);
             return false;
@@ -114,6 +135,9 @@ public class CacheManager implements ICacheManager {
      */
     @Override
     public void removeAllDataFromCache(Class<?> clazz) {
+        removeAllDataFromCache(clazz, null);
+    }
+    public void removeAllDataFromCache(Class<?> clazz, ObjectPersister<?> persister) {
         try {
             getObjectPersister(clazz).removeAllDataFromCache();
         } catch (CacheCreationException e) {
@@ -126,8 +150,11 @@ public class CacheManager implements ICacheManager {
      */
     @Override
     public <T> List<Object> getAllCacheKeys(final Class<T> clazz) {
+        return getAllCacheKeys(clazz, null);
+    }
+    public <T> List<Object> getAllCacheKeys(final Class<T> clazz, ObjectPersister<T> persister) {
         try {
-            return getObjectPersister(clazz).getAllCacheKeys();
+            return getObjectPersister(clazz, persister).getAllCacheKeys();
         } catch (CacheCreationException e) {
             Ln.e(e);
             return Collections.emptyList();
@@ -142,7 +169,11 @@ public class CacheManager implements ICacheManager {
     public <T> List<T> loadAllDataFromCache(final Class<T> clazz) throws CacheLoadingException, CacheCreationException {
         return getObjectPersister(clazz).loadAllDataFromCache();
     }
-
+    
+    public <T> List<T> loadAllDataFromCache(final Class<T> clazz, ObjectPersister<T> persister) throws CacheLoadingException, CacheCreationException {
+        return getObjectPersister(clazz, persister).loadAllDataFromCache();
+    }
+    
     /** {@inheritDoc} */
     @Override
     public void removeAllDataFromCache() {
@@ -164,6 +195,19 @@ public class CacheManager implements ICacheManager {
 
     @SuppressWarnings("unchecked")
     protected <T> ObjectPersister<T> getObjectPersister(Class<T> clazz) throws CacheCreationException {
+        return getObjectPersister(clazz, null);
+    }
+    
+    @SuppressWarnings("unchecked")
+    protected <T> ObjectPersister<T> getObjectPersister(Class<T> clazz, ObjectPersister<T> providedPersister) throws CacheCreationException {
+        
+        if (providedPersister != null) {
+            if (!this.listPersister.contains(providedPersister)) {
+                this.listPersister.add(providedPersister);
+            }
+            return providedPersister;
+        }
+        
         for (Persister persister : this.listPersister) {
             if (persister.canHandleClass(clazz)) {
                 if (persister instanceof ObjectPersister) {
